@@ -1,0 +1,111 @@
+
+enum ListingType {
+	PUBLIC, PRIVATE
+}
+entity Application{
+	name String,
+    description String,
+    type String,
+    createdTime Instant,
+    updatedTime ZonedDateTime,
+    accessRole String,
+    listingType ListingType
+}
+
+relationship ManyToOne {
+	Application{user(id)} to User
+}
+relationship ManyToMany {
+	Application{accessGiven} to User
+}
+
+enum Gender {
+	ALL, MALE, FEMALE, NOT_APPLICABLE
+}
+
+entity Survey{
+    createdTime Instant required,
+    updatedTime Instant required,
+    fromDate ZonedDateTime,
+    toDate ZonedDateTime,
+    targetGender Gender,
+    minTargetAge Integer,
+    maxTargetAge Integer,
+    description String required,
+    name String required,
+    questionOrderRandom Boolean,
+    questionOptionsOrderRandom Boolean,
+    theme String required,
+    template String required,
+    color String,
+    logo String,
+    anonymous Boolean required,
+    multipleEntry Boolean
+}
+
+relationship ManyToOne{
+	Survey to Application
+}
+
+entity Pages {
+	title String,
+    description String,
+    pageNo Integer,
+    createdTime Instant required,
+    updatedTime Instant required
+}
+
+relationship ManyToOne{
+	Pages to Survey
+}
+
+
+
+entity SurveyQuestions{
+    question String required,
+    attachment String,
+    attachmentType String,
+    mandatory Boolean required,
+    orderIdx Integer required,
+    type String required,
+    options String    
+}
+
+relationship ManyToOne {
+	SurveyQuestions to Pages
+}
+
+entity Answers {
+	attemptTime Instant required,
+    answers String
+}
+
+relationship ManyToOne {
+	Answers to Survey
+    Answers to User
+}
+
+entity UserLog{
+	attemptTime Instant,
+    completed Boolean,
+    metadata String
+}
+
+relationship ManyToOne {
+	UserLog to User
+    UserLog to Survey
+}
+
+
+
+
+service all with serviceImpl
+dto * with mapstruct
+
+
+
+// Set pagination options
+paginate * with infinite-scroll
+//paginate Job with pagination
+
+//ALTER TABLE public.application_user ALTER COLUMN user_id TYPE VARCHAR(100);
