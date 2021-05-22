@@ -1,0 +1,84 @@
+entity Campaign {
+	campaignId Long unique
+}
+
+entity Template {
+    templateId Long unique,
+    type Type,
+    redirect String,
+    placeholder String
+}
+
+entity Customer {
+	customerId Long unique
+}
+
+entity DistributionList {
+	dlId Long unique,
+    channel Channel
+}
+
+entity LinkTable {
+	redirectJson String,
+    placeHolderJson String,
+    retries Integer,
+    retryLimit Integer,
+    status Status,
+    correspondanceDetails String
+}
+
+entity LinkTable2 {
+	status Status,
+    retries Integer,
+    retryLimit Integer 
+}
+
+entity Calendar {
+	timezone String,
+    startDate ZonedDateTime,
+    endDate ZonedDateTime,
+    eventTitle String,
+    rsvp Boolean,
+    rsvpRecipient String
+}
+
+entity EmailDetails {
+	subject String,
+    from String,
+    attachments Blob,
+    typeInfo Channel
+}
+
+entity SMSDetails {
+	content String,
+    typeInfo Channel
+}
+
+enum Type {
+	EMAIL, SMS
+}
+enum Channel {
+    SMS, EMAIL, WHATSAPP
+}
+
+enum Status {
+	PENDING, PROCESSING, COMPLETED, FAILURE 
+}
+
+relationship ManyToOne {
+	LinkTable{campaign required} to Campaign,
+	LinkTable{template required} to Template,
+    LinkTable{customer required} to Customer,
+    LinkTable{dd required} to EmailDetails,
+    LinkTable2{campaign required} to Campaign,
+	LinkTable2{template required} to Template,
+    LinkTable2{dd required} to EmailDetails,
+    EmailDetails{dlTO} to DistributionList,
+    EmailDetails{dlCC} to DistributionList,
+    EmailDetails{dlBCC} to DistributionList,
+    EmailDetails{calendar} to Calendar,
+    SMSDetails{dlTarget} to DistributionList
+}
+dto all with mapstruct
+
+service all with serviceImpl
